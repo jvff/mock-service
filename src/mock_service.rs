@@ -8,4 +8,6 @@ pub trait MockService: Service {
         request: <Self as Service>::Request,
         action: &mut MockAction<Self>,
     );
+
+    fn remove_action(&mut self, request: <Self as Service>::Request);
 }
