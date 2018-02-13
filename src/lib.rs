@@ -1,3 +1,4 @@
+extern crate async_server;
 extern crate tokio_service;
 
 mod finite_mock_service;
