@@ -4,5 +4,9 @@ pub trait MockAction<S>
 where
     S: MockService,
 {
-    fn act(&mut self, mock_service: &mut S) -> S::Response;
+    fn act(
+        &mut self,
+        request: &S::Request,
+        mock_service: &mut S,
+    ) -> S::Response;
 }
