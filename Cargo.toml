@@ -5,4 +5,6 @@ authors = ["Janito Vaqueiro Ferreira Filho <janito.vff@gmail.com>"]
 
 [dependencies]
 async-server = { git = "https://github.com/jvff/async-server" }
+failure = "0.1"
+failure_derive = "0.1"
 tokio-service = "0.1"
