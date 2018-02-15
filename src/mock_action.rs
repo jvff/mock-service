@@ -1,12 +1,16 @@
-use super::mock_service::MockService;
+use super::mock_service_handle::MockServiceHandle;
 
-pub trait MockAction<S>
-where
-    S: MockService,
-{
+pub trait MockAction {
+    type Request;
+    type Response;
+
     fn act(
         &mut self,
-        request: &S::Request,
-        mock_service: &mut S,
-    ) -> S::Response;
+        request: &Self::Request,
+        mock_service:
+            &mut MockServiceHandle<
+                Request = Self::Request,
+                Response = Self::Response,
+            >,
+    ) -> Self::Response;
 }

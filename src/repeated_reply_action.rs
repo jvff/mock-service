@@ -1,30 +1,44 @@
-use super::mock_action::MockAction;
-use super::mock_service::MockService;
+use std::marker::PhantomData;
 
-pub struct RepeatedReplyAction<T>
+use super::mock_action::MockAction;
+use super::mock_service_handle::MockServiceHandle;
+
+pub struct RepeatedReplyAction<A, B>
 where
-    T: Clone,
+    B: Clone,
 {
-    reply: T,
+    _request: PhantomData<A>,
+    reply: B,
 }
 
-impl<T> From<T> for RepeatedReplyAction<T>
+impl<A, B> From<B> for RepeatedReplyAction<A, B>
 where
-    T: Clone,
+    B: Clone,
 {
-    fn from(reply: T) -> Self {
+    fn from(reply: B) -> Self {
         RepeatedReplyAction {
+            _request: PhantomData,
             reply,
         }
     }
 }
 
-impl<S> MockAction<S> for RepeatedReplyAction<S::Response>
+impl<A, B> MockAction for RepeatedReplyAction<A, B>
 where
-    S: MockService,
-    S::Response: Clone,
+    B: Clone,
 {
-    fn act(&mut self, _request: &S::Request, _service: &mut S) -> S::Response {
+    type Request = A;
+    type Response = B;
+
+    fn act(
+        &mut self,
+        _request: &A,
+        _service:
+            &mut MockServiceHandle<
+                Request = Self::Request,
+                Response = Self::Response,
+            >,
+    ) -> B {
         self.reply.clone()
     }
 }

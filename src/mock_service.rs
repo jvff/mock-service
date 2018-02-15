@@ -1,13 +1,12 @@
 use tokio_service::Service;
 
-use super::mock_action::MockAction;
+use super::mock_service_handle::MockServiceHandle;
 
-pub trait MockService: Service {
-    fn set_action(
-        &mut self,
-        request: &<Self as Service>::Request,
-        action: &mut MockAction<Self>,
-    );
-
-    fn remove_action(&mut self, request: &<Self as Service>::Request);
+pub trait MockService:
+    Service
+        + MockServiceHandle<
+            Request = <Self as Service>::Request,
+            Response = <Self as Service>::Response,
+        >
+{
 }

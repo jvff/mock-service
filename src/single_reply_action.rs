@@ -1,23 +1,35 @@
-use super::mock_action::MockAction;
-use super::mock_service::MockService;
+use std::marker::PhantomData;
 
-pub struct SingleReplyAction<T> {
-    reply: Option<T>,
+use super::mock_action::MockAction;
+use super::mock_service_handle::MockServiceHandle;
+
+pub struct SingleReplyAction<A, B> {
+    _request: PhantomData<A>,
+    reply: Option<B>,
 }
 
-impl<T> From<T> for SingleReplyAction<T> {
-    fn from(reply: T) -> Self {
+impl<A, B> From<B> for SingleReplyAction<A, B> {
+    fn from(reply: B) -> Self {
         SingleReplyAction {
+            _request: PhantomData,
             reply: Some(reply),
         }
     }
 }
 
-impl<S> MockAction<S> for SingleReplyAction<S::Response>
-where
-    S: MockService,
-{
-    fn act(&mut self, request: &S::Request, service: &mut S) -> S::Response {
+impl<A, B> MockAction for SingleReplyAction<A, B> {
+    type Request = A;
+    type Response = B;
+
+    fn act(
+        &mut self,
+        request: &A,
+        service:
+            &mut MockServiceHandle<
+                Request = Self::Request,
+                Response = Self::Response,
+            >,
+    ) -> B {
         service.remove_action(request);
 
         self.reply.take().expect(concat!(
