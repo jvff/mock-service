@@ -12,4 +12,6 @@ pub trait MockServiceHandle {
     );
 
     fn remove_action(&mut self, request: Self::Request);
+
+    fn mark_finished(&mut self);
 }

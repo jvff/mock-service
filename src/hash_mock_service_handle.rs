@@ -14,6 +14,7 @@ where
     A: Eq + Hash,
 {
     changes: Vec<Change<A, B>>,
+    finished: bool,
 }
 
 impl<A, B> HashMockServiceHandle<A, B>
@@ -23,6 +24,7 @@ where
     pub fn new() -> Self {
         HashMockServiceHandle {
             changes: Vec::new(),
+            finished: false,
         }
     }
 
@@ -36,6 +38,10 @@ where
                 Change::Remove(request) => map.remove(&request),
             };
         }
+    }
+
+    pub fn has_finished(&self) -> bool {
+        self.finished
     }
 }
 
@@ -57,5 +63,9 @@ where
 
     fn remove_action(&mut self, request: Self::Request) {
         self.changes.push(Change::Remove(request));
+    }
+
+    fn mark_finished(&mut self) {
+        self.finished = true;
     }
 }

@@ -12,6 +12,7 @@ where
     A: Debug + Eq + Hash,
 {
     request_map: HashMap<A, Box<MockAction<Request = A, Response = B>>>,
+    finished: bool,
 }
 
 impl<A, B> HashMockServiceData<A, B>
@@ -21,7 +22,12 @@ where
     pub fn new() -> Self {
         HashMockServiceData {
             request_map: HashMap::new(),
+            finished: false,
         }
+    }
+
+    pub fn has_finished(&self) -> bool {
+        self.finished
     }
 
     pub fn call(&mut self, request: A) -> Result<B, MockServiceError<A>> {
@@ -63,5 +69,9 @@ where
 
     fn remove_action(&mut self, request: Self::Request) {
         self.request_map.remove(&request);
+    }
+
+    fn mark_finished(&mut self) {
+        self.finished = true;
     }
 }

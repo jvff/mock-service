@@ -3,6 +3,7 @@ use std::hash::Hash;
 use std::io;
 use std::sync::{Arc, Mutex, MutexGuard};
 
+use async_server::FiniteService;
 use futures::IntoFuture;
 use futures::future::FutureResult;
 use tokio_service::{NewService, Service};
@@ -74,12 +75,31 @@ where
     fn remove_action(&mut self, request: Self::Request) {
         self.lock().remove_action(request);
     }
+
+    fn mark_finished(&mut self) {
+        self.lock().mark_finished();
+    }
 }
 
 impl<A, B> MockService for HashMockService<A, B>
 where
     A: Debug + Eq + Hash,
 {
+}
+
+impl<A, B> FiniteService for HashMockService<A, B>
+where
+    A: Debug + Eq + Hash,
+{
+    fn has_finished(&self) -> Result<bool, <Self as Service>::Error> {
+        Ok(self.lock().has_finished())
+    }
+
+    fn force_stop(&mut self) -> Result<(), <Self as Service>::Error> {
+        self.lock().mark_finished();
+
+        Ok(())
+    }
 }
 
 impl<A, B> NewService for HashMockService<A, B>
