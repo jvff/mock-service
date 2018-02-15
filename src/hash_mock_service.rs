@@ -1,10 +1,11 @@
 use std::fmt::Debug;
 use std::hash::Hash;
+use std::io;
 use std::sync::{Arc, Mutex, MutexGuard};
 
 use futures::IntoFuture;
 use futures::future::FutureResult;
-use tokio_service::Service;
+use tokio_service::{NewService, Service};
 
 use super::error::MockServiceError;
 use super::hash_mock_service_data::HashMockServiceData;
@@ -79,4 +80,22 @@ impl<A, B> MockService for HashMockService<A, B>
 where
     A: Debug + Eq + Hash,
 {
+}
+
+impl<A, B> NewService for HashMockService<A, B>
+where
+    A: Debug + Eq + Hash,
+{
+    type Request = A;
+    type Response = B;
+    type Error = MockServiceError<A>;
+    type Instance = Self;
+
+    fn new_service(&self) -> io::Result<Self::Instance> {
+        let instance = HashMockService {
+            data: self.data.clone(),
+        };
+
+        Ok(instance)
+    }
 }
