@@ -5,6 +5,7 @@ use std::hash::Hash;
 use super::error::MockServiceError;
 use super::hash_mock_service_handle::HashMockServiceHandle;
 use super::mock_action::MockAction;
+use super::mock_service_handle::MockServiceHandle;
 
 pub struct HashMockServiceData<A, B>
 where
@@ -41,5 +42,26 @@ where
             Some(action) => Ok(action.act(request, handle)),
             None => Err(MockServiceError::UnexpectedRequest(request)),
         }
+    }
+}
+
+impl<A, B> MockServiceHandle for HashMockServiceData<A, B>
+where
+    A: Debug + Eq + Hash,
+{
+    type Request = A;
+    type Response = B;
+
+    fn set_action(
+        &mut self,
+        request: Self::Request,
+        action:
+            Box<MockAction<Request = Self::Request, Response = Self::Response>>,
+    ) {
+        self.request_map.insert(request, action);
+    }
+
+    fn remove_action(&mut self, request: Self::Request) {
+        self.request_map.remove(&request);
     }
 }
