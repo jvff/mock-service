@@ -6,7 +6,7 @@ pub trait MockAction {
 
     fn act(
         &mut self,
-        request: &Self::Request,
+        request: Self::Request,
         mock_service:
             &mut MockServiceHandle<
                 Request = Self::Request,

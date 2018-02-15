@@ -23,7 +23,7 @@ impl<A, B> MockAction for SingleReplyAction<A, B> {
 
     fn act(
         &mut self,
-        request: &A,
+        request: A,
         service:
             &mut MockServiceHandle<
                 Request = Self::Request,

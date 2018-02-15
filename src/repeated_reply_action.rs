@@ -32,7 +32,7 @@ where
 
     fn act(
         &mut self,
-        _request: &A,
+        _request: A,
         _service:
             &mut MockServiceHandle<
                 Request = Self::Request,
